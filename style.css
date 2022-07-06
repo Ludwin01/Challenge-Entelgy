@@ -1,3 +1,5 @@
+/* Variables generales */
+
 :root{
   --background-color: #89d1f3;
 }
@@ -20,6 +22,7 @@ main {
   padding: 1rem 0;
 }
 
+/* Variables para contenido */
 #contain-users{
   display: flex;
   flex-wrap: wrap;
@@ -28,6 +31,7 @@ main {
   align-items: center;
 }
 
+/* Agregar titulo dentro del aplicativo */
 .title:before{
   content: 'Usuarios Challenge | Ludwin Suárez';
   opacity: 0.1;

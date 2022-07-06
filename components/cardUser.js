@@ -1,19 +1,21 @@
 class cardUser extends HTMLElement {
+  // constructor con mi shadowDom
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
   }
-
+  //  observar atributos que acepta el componete
   static get observedAttributes() {
     return ["avatar", "first_name", "last_name", "email", "id"];
   }
-
+  // por cada cambio de atributo almacenar tal como el nombre del atributo lo indique
   attributeChangedCallback(attr, oldVal, newVal) {
     if (newVal !== oldVal) {
       this[attr] = newVal;
     }
   }
 
+  // elaboro mi template para renderizar
   getTemplate() {
     const template = document.createElement("template");
     template.innerHTML = `
@@ -38,7 +40,7 @@ class cardUser extends HTMLElement {
 
     return template;
   }
-
+  // los estilos para cada elemento del componente
   getStyles() {
     return `
 
@@ -123,21 +125,25 @@ class cardUser extends HTMLElement {
       </style>
     `;
   }
-
+  // método que renderiza el componente
   render() {
     this.shadowRoot.appendChild(this.getTemplate().content.cloneNode(true));
   }
-
+  // Ejecuta cuadno el componente este listo en el dom
   connectedCallback() {
+    // Renderizo el componente
     this.render();
-    let userId = this.id
+    // asigno el id a una variable userId
+    let userId = this.id;
+    // busco el elemento donde dará el click para activar el modal
     const card = this.shadowRoot.getElementById("card");
+    // En cada click va a setear los atributosque se le asigna
     card.addEventListener("click", function () {
-      let modal = document.getElementById('modal-user')
-      modal.setAttribute('userid', `${userId}`)
-      modal.setAttribute('isvisible', 'true')
+      let modal = document.getElementById("modal-user");
+      modal.setAttribute("userid", `${userId}`);
+      modal.setAttribute("isvisible", "true");
     });
   }
 }
-
+// defino como se llamará el componente
 customElements.define("card-user", cardUser);

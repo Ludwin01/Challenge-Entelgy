@@ -1,30 +1,39 @@
 import { getUserById } from "../services/users.js";
 
 class modalUser extends HTMLElement {
+  // costructor
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
     this.user;
   }
-
+  // Observo los atributos que acepta mi componente
   static get observedAttributes() {
     return ["isvisible", "userid"];
   }
 
+  // ejecuto cada vez que cambian los atributos para ejecutar los metodos correspondientes
   attributeChangedCallback(attr, oldVal, newVal) {
+    // Lo que debo hacer cuando cambia el atributo userid
     if (attr == "userid") {
+      // seteando el usuario ya encontrado
       this.user = !!getUserById(newVal) && getUserById(newVal);
     }
+    // Lo que debo hacer cuando cambia el atributo isvisible
     if (attr == "isvisible") {
+      // seteando el valor de isvisible
       this.isvisible = newVal;
       if (this.isvisible == "true") {
+        // ejecuto el siguiente método cuando es visible
         this._showModal();
       } else {
+        // ejecuto el siguiente método cuando no es visible
         this._hideModal();
       }
     }
   }
 
+  // Declarando mi template que será la maqueta para mi componente
   getTemplate() {
     const template = document.createElement("template");
     template.innerHTML = `
@@ -64,13 +73,12 @@ class modalUser extends HTMLElement {
         <footer></footer>
       </div>
     </div>
-
       ${this.getStyle()}
     `;
-
+    // retorno mi template ya concatenado con sus estilos correspondientes
     return template;
   }
-
+  // declaro los estilos con sus mediaQuery
   getStyle() {
     return `
       <style>
@@ -245,11 +253,12 @@ class modalUser extends HTMLElement {
       </style>
     `;
   }
-
+  // Ejecuta cuando el componente ya esta listo en el dom
   connectedCallback() {
     // Renderizando el componente
     this.shadowRoot.appendChild(this.getTemplate().content.cloneNode(true));
 
+    // Ubicando los lugares para agregar el contenido dinámico
     this._modal = this.shadowRoot.querySelector("div.modal");
     this.headerModal = this.shadowRoot.querySelector("h2.header-text");
     this.imgModal = this.shadowRoot.querySelector("img.img-container");
@@ -258,10 +267,11 @@ class modalUser extends HTMLElement {
     this.email = this.shadowRoot.querySelector("p.email");
     this.footer = this.shadowRoot.querySelector("footer");
 
+    // Boton para ocultar modal
     this.shadowRoot
       .querySelector("button.superior")
       ?.addEventListener("click", this._hideModal());
-
+    // seteando isvisible a falso cada vez que cierro modal
     let button = this.shadowRoot.querySelectorAll("button.superior");
     button.forEach((item) => {
       item.addEventListener("click", () => {
@@ -271,7 +281,9 @@ class modalUser extends HTMLElement {
     });
   }
 
+  // Método que debe ejecutar cuando el isvisible es true
   _showModal() {
+    // Agregando data en cada contenedor que declaramos anteriormente
     this._modal.style.display = "flex";
     this.headerModal.textContent = `${this.user.first_name}`;
     this.imgModal.setAttribute("src", `${this.user.avatar}`);
@@ -287,9 +299,11 @@ class modalUser extends HTMLElement {
     ${this.user?.first_name} ${this.user?.last_name} | ${this.user?.email}
   `;
   }
+  // Método al ocultar modal
   _hideModal() {
     this._modal.style.display = "none";
   }
 }
 
+// Defino como se invocará mi componente modal
 customElements.define("modal-user", modalUser);
