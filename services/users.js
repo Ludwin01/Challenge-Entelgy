@@ -23,7 +23,7 @@ export const getUser = async () => {
   }
 };
 
-export const getUserById =  (id) => {
+export const getUserById =  (id=1) => {
   const users = JSON.parse(window.localStorage.getItem("allUsers") || "")
   if (!users) return null
   const user = users.find(user=>user.id==id)

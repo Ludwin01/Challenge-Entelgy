@@ -25,9 +25,9 @@ class cardUser extends HTMLElement {
           alt="El avatar"
           title="Avatar de chanchan"
           src="${this.avatar}"/>
-        <div>
-          <h2>${this.first_name} ${this.last_name}</h2>
-          <p>${this.email}</p>
+        <div class="container-description">
+          <h2 class="full-name">${this.first_name} ${this.last_name}</h2>
+          <p class="email">${this.email}</p>
         </div>
 
       </div>
@@ -56,7 +56,7 @@ class cardUser extends HTMLElement {
 
         .card-wrapper{
           width: 20rem;
-          height: 12rem;
+          height: 10rem;
           background: var(--color-shadow);
           display: flex;
           align-items: center;
@@ -82,6 +82,43 @@ class cardUser extends HTMLElement {
           width: 100%;
           justify-content: space-evenly;
           align-items: center;
+        }
+
+        @media(max-width: 720px){
+          .card-wrapper{
+            height: 8rem;
+          }
+        }
+
+        @media (max-width: 350px) {
+          .card-wrapper {
+            max-width: 80%;
+            height: 100%;
+            padding: 5px 0;
+          }
+          .image{
+            height: 4rem;
+            width: 4rem;
+          }
+
+          :host{
+            justify-content: center;
+            display: flex;
+          }
+          .container-description{
+
+          }
+          .full-name{
+            font-size: 18px;
+            margin: 0;
+          }
+          .email{
+            margin: 0;
+            font-size: 13px;
+          }
+          .container-description{
+            width: 65%;
+          }
         }
       </style>
     `;

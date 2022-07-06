@@ -4,35 +4,25 @@ class modalUser extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    this.user
+    this.user;
   }
 
   static get observedAttributes() {
-    return ['isvisible', 'userid']
+    return ["isvisible", "userid"];
   }
 
   attributeChangedCallback(attr, oldVal, newVal) {
-    if (newVal !== oldVal) {
-      this[attr] = newVal;
-      this.user = getUserById(this.userid)
-      
-      const sheet = new CSSStyleSheet
-      if (this.isvisible=='true') {
-        sheet.replaceSync( `.modal{ display: flex }`)
-      } else {
-        sheet.replaceSync( `.modal{ display: none }`)
-      }
-      this.shadowRoot.adoptedStyleSheets = [ sheet ] 
-      this.shadowRoot.appendChild(this.getTemplate().content.cloneNode(true));
-      
+    if (attr == "userid") {
+      this.user = !!getUserById(newVal) && getUserById(newVal);
     }
-    let button = this.shadowRoot.querySelectorAll('button.superior')
-    button.forEach((item) => {
-      item.addEventListener('click', () => {
-        let modal = document.getElementById('modal-user')
-        modal.setAttribute('isvisible', 'false')
-      })
-    })
+    if (attr == "isvisible") {
+      this.isvisible = newVal;
+      if (this.isvisible == "true") {
+        this._showModal();
+      } else {
+        this._hideModal();
+      }
+    }
   }
 
   getTemplate() {
@@ -42,20 +32,27 @@ class modalUser extends HTMLElement {
       <div class='modal-dialog'>
 
         <header>
-          <h2 class="header-text">
-            ${this.user.first_name}
-          </h2>
+          <h2 class="header-text"></h2>
           <button id="close" class="superior" >
             X
           </button>
         </header>
 
         <div class="modal-body">
-          <img class="img-container" src="${this.user.avatar}" />
+          <img class="img-container" />
           <div>
-            <h2 class="description-text"><span>Nombre: </span>${this.user.first_name }</h2>
-            <p class="description-text"><span>Apellido: </span> ${this.user.last_name }</p>
-            <p class="description-text"><span>Contacto: </span> ${this.user.email }</p>
+            <div class="description-cont">
+              <p class="description-paragraph">Nombre: </p>
+              <h2 class="description-text"></h2>
+            </div>
+            <div class="description-cont">
+              <p class="description-paragraph">Apellido: </p>
+              <p class="description-text lastname"></p>
+            </div>
+            <div class="description-cont">
+              <p class="description-paragraph">Email: </p>
+              <p class="description-text email"></p>
+            </div>
           </div>
           <div class="wrapper-point">
             <div class="point"></div>
@@ -64,19 +61,12 @@ class modalUser extends HTMLElement {
           </div>
         </div>
 
-        <footer>
-          <p>${this.user.first_name }  ${this.user.last_name} | ${this.user.email}</p>
-        </footer>
+        <footer></footer>
       </div>
-      <scrip>
-        function onButton () {
-          console.log('Clickcito por favor funciona')
-        }
-      </scrip>
     </div>
 
       ${this.getStyle()}
-    `
+    `;
 
     return template;
   }
@@ -86,12 +76,13 @@ class modalUser extends HTMLElement {
       <style>
         .modal{
           width: 100vw;
-          height: 100vh;
+          height: 100%;
           background-color: RGB(0,0,0, 0.6);
           position: fixed;
           top: 0;
           left: 0;
-          display: none;
+          right: 0;
+          bottom: 0;
           justify-content: center;
           align-items: center;
           z-index: 1;
@@ -114,11 +105,11 @@ class modalUser extends HTMLElement {
 
         .modal-dialog {
           width: 40%;
-          height: 40vh;
           background-color: RGB(255,255,255, 0.4);
           backdrop-filter: blur(2px);
           border-radius: 20px;
           padding: 0.5rem 1rem;
+          transition: width .5s ease;
         }
 
         img {
@@ -175,7 +166,7 @@ class modalUser extends HTMLElement {
 
         @keyframes vayven {
           from {
-            transform: translateX(30px);
+            transform: translateX(20px);
           }
         
           to {
@@ -195,8 +186,60 @@ class modalUser extends HTMLElement {
           font-weight: 500;
         }
 
-        .description-text > span{
-          font-weight: 700;
+        .description-paragraph{
+          margin: 0;
+          font-size: 22px;
+          font-weight: 700:
+        }
+
+        .description-cont{
+          display: flex;
+          align-items: center;
+          line-height: 0;
+          flex-wrap: wrap;
+        }
+
+        @media (max-width: 1300px) {
+          .modal-body{
+            justify-content: center;
+            margin-top: 1rem;
+            flex-direction: column;
+          }
+          .wrapper-point{
+            transform: rotate(90deg);
+            margin-right: 0;
+          }
+          
+        }
+
+        @media (max-width: 950px) {
+          
+          .modal-dialog{
+            width: 70%;
+          }
+        }
+
+        @media (max-width: 460px) {
+          .img-container{
+            width: auto;
+          }
+          .description-paragraph, .description-text{
+            font-size: 18px;
+          }
+          .point{
+            height: 0.5rem;
+            width: 0.5rem;
+          }
+          .line{
+            height: 2rem;
+            width: 0.5rem;
+          }
+          footer{
+            font-size: 10px;
+          }
+          img{
+            margin-left: 0;
+          }
         }
 
       </style>
@@ -204,12 +247,49 @@ class modalUser extends HTMLElement {
   }
 
   connectedCallback() {
-    let button = this.shadowRoot.getElementById('close')
-    if (button) {
-      button.addEventListener('click', clickFunction())
-    }
+    // Renderizando el componente
+    this.shadowRoot.appendChild(this.getTemplate().content.cloneNode(true));
+
+    this._modal = this.shadowRoot.querySelector("div.modal");
+    this.headerModal = this.shadowRoot.querySelector("h2.header-text");
+    this.imgModal = this.shadowRoot.querySelector("img.img-container");
+    this.nameModal = this.shadowRoot.querySelector("h2.description-text");
+    this.lastName = this.shadowRoot.querySelector("p.lastname");
+    this.email = this.shadowRoot.querySelector("p.email");
+    this.footer = this.shadowRoot.querySelector("footer");
+
+    this.shadowRoot
+      .querySelector("button.superior")
+      ?.addEventListener("click", this._hideModal());
+
+    let button = this.shadowRoot.querySelectorAll("button.superior");
+    button.forEach((item) => {
+      item.addEventListener("click", () => {
+        let modal = document.getElementById("modal-user");
+        modal.setAttribute("isvisible", "false");
+      });
+    });
   }
-  
+
+  _showModal() {
+    this._modal.style.display = "flex";
+    this.headerModal.textContent = `${this.user.first_name}`;
+    this.imgModal.setAttribute("src", `${this.user.avatar}`);
+    this.imgModal.setAttribute(
+      "alt",
+      `${this.user.first_name} ${this.user.last_name}`
+    );
+    this.imgModal.setAttribute("title", `${this.user.first_name}`);
+    this.nameModal.textContent = `${this.user.first_name}`;
+    this.lastName.textContent = `${this.user.last_name}`;
+    this.email.textContent = `${this.user.email}`;
+    this.footer.textContent = `
+    ${this.user?.first_name} ${this.user?.last_name} | ${this.user?.email}
+  `;
+  }
+  _hideModal() {
+    this._modal.style.display = "none";
+  }
 }
 
 customElements.define("modal-user", modalUser);

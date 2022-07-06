@@ -17,7 +17,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 4rem 0;
+  padding: 1rem 0;
 }
 
 #contain-users{
@@ -25,4 +25,12 @@ main {
   flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
+  align-items: center;
+}
+
+.title:before{
+  content: 'Usuarios Challenge | Ludwin Suárez';
+  opacity: 0.1;
+  font-size: 28px;
+  font-weight: bold;
 }
