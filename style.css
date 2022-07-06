@@ -1,0 +1,28 @@
+:root{
+  --background-color: #89d1f3;
+}
+body{
+  height:100%
+  margin: 0;
+}
+
+
+body {
+  font-family: "Gill Sans Extrabold", Helvetica, sans-serif;
+  background: rgb(2,100,173);
+background: linear-gradient(90deg, rgba(2,100,173,0.8491771708683473) 0%, rgba(83,186,232,1) 68%, rgba(181,229,249,1) 100%);
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 0;
+}
+
+#contain-users{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
